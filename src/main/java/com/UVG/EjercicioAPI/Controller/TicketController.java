@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.UVG.EjercicioAPI.DTO.StatusUpdateDTO;
 import com.UVG.EjercicioAPI.Model.TicketModel;
 import com.UVG.EjercicioAPI.Repository.TicketRepository;
 
@@ -34,18 +35,19 @@ public class TicketController {
         return ticket.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @PutMapping("/incidents/{id}")
-    public ResponseEntity<TicketModel> updateTicketStatus(@PathVariable int id, @RequestBody String newStatus) {
-        Optional<TicketModel> ticketOptional = ticketRepository.findById(id);
-        if (ticketOptional.isPresent()) {
-            TicketModel ticket = ticketOptional.get();
-            ticket.setStatus(newStatus);
-            ticketRepository.save(ticket);
-            return ResponseEntity.ok(ticket);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+@PutMapping("/incidents/{id}")
+public ResponseEntity<TicketModel> updateTicketStatus(@PathVariable int id, @RequestBody StatusUpdateDTO statusUpdate) {
+    Optional<TicketModel> ticketOptional = ticketRepository.findById(id);
+    if (ticketOptional.isPresent()) {
+        TicketModel ticket = ticketOptional.get();
+        ticket.setStatus(statusUpdate.getStatus());
+        ticketRepository.save(ticket);
+        return ResponseEntity.ok(ticket);
+    } else {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+}
+
 
     @DeleteMapping("/incidents/{id}")
     public ResponseEntity<Void> deleteTicket(@PathVariable int id) {
